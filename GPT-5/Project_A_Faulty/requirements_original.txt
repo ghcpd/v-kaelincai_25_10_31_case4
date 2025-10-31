@@ -1,3 +1,0 @@
-# Requirements for faulty implementation
-# Random + threading only use stdlib; keeping pytest optional for tests.
-pytest==8.0.0
