@@ -1,0 +1,74 @@
+{
+  "cases": [
+    {
+      "name": "baseline_deterministic",
+      "input": {
+        "transactions": [
+          {"id": "B-001", "amount": 120.0, "timestamp": "2025-08-01T12:00:00Z", "channel": "web", "risk_weight": 0.6},
+          {"id": "B-002", "amount": 340.0, "timestamp": "2025-08-01T12:05:00Z", "channel": "mobile", "risk_weight": 0.8}
+        ]
+      },
+      "expected": {
+        "total_score": "stable",
+        "trending_ids": ["B-002", "B-001"],
+        "summary.count": 2
+      },
+      "flaky_type": "None (control)",
+      "criteria": "Should pass consistently if implementation were correct"
+    },
+    {
+      "name": "concurrency_race",
+      "input": {
+        "transactions": [
+          {"id": "C-100", "amount": 500.0, "timestamp": "2025-08-01T09:10:00Z", "channel": "web", "risk_weight": 0.9},
+          {"id": "C-100", "amount": 500.0, "timestamp": "2025-08-01T09:10:01Z", "channel": "web", "risk_weight": 0.9},
+          {"id": "C-101", "amount": 510.0, "timestamp": "2025-08-01T09:10:02Z", "channel": "mobile", "risk_weight": 0.91}
+        ]
+      },
+      "expected": {
+        "total_score": "within 10% variance",
+        "trending_ids": "unstable order possible"
+      },
+      "flaky_type": "race_condition",
+      "criteria": "Multiple threads mutate shared cache -> inconsistent totals"
+    },
+    {
+      "name": "empty_batch",
+      "input": {
+        "transactions": []
+      },
+      "expected": {
+        "total_score": 0,
+        "trending_ids": []
+      },
+      "flaky_type": "boundary",
+      "criteria": "Must handle gracefully without throwing or reusing previous state"
+    },
+    {
+      "name": "malformed_payload",
+      "input": {
+        "transactions": [
+          {"id": "M-500", "amount": "NaN", "timestamp": "not-a-date", "channel": "ivr", "risk_weight": 0.5}
+        ]
+      },
+      "expected": {
+        "error": "validation"
+      },
+      "flaky_type": "validation",
+      "criteria": "Faulty code may crash or leak state inconsistently"
+    },
+    {
+      "name": "state_leakage",
+      "input": {
+        "transactions": [
+          {"id": "S-1", "amount": 10.0, "timestamp": "2025-08-01T11:00:00Z", "channel": "web", "risk_weight": 0.2}
+        ]
+      },
+      "expected": {
+        "total_score": "repeatable"
+      },
+      "flaky_type": "stateful",
+      "criteria": "Repeated runs should be independent but faulty code reuses global state"
+    }
+  ]
+}

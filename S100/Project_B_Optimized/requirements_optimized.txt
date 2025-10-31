@@ -1,0 +1,5 @@
+# Requirements for Project B (Optimized)
+pytest==7.4.4
+rich==13.7.1
+numpy==1.26.4
+python-dateutil==2.9.0.post0

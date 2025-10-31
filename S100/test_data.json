@@ -1,0 +1,49 @@
+{
+  "cases": [
+    {
+      "name": "baseline_deterministic",
+      "description": "Control scenario with two transactions expected to produce deterministic ordering and totals in optimized implementation.",
+      "flaky_signature": "Minimal variance expected; used to detect unnecessary jitter",
+      "expected": {
+        "Project_A": "Variable totals due to random noise",
+        "Project_B": "Total score 292.0"
+      }
+    },
+    {
+      "name": "concurrency_race",
+      "description": "Duplicate transactions forcing contention in shared state when processed concurrently.",
+      "flaky_signature": "Trending order differs between runs in Project A; stable in Project B.",
+      "expected": {
+        "Project_A": "Multiple unique trending orderings",
+        "Project_B": "Deterministic order ('C-100', 'C-101')"
+      }
+    },
+    {
+      "name": "empty_batch",
+      "description": "Boundary case representing zero transactions.",
+      "flaky_signature": "Project A may return stale cache values; Project B returns zero totals.",
+      "expected": {
+        "Project_A": "Occasional non-zero totals",
+        "Project_B": "Zero totals"
+      }
+    },
+    {
+      "name": "malformed_payload",
+      "description": "Invalid timestamps and channel values to test validation paths.",
+      "flaky_signature": "Project A may throw inconsistent exceptions or proceed; Project B raises ValidationError.",
+      "expected": {
+        "Project_A": "Inconsistent exception messages",
+        "Project_B": "Deterministic ValidationError"
+      }
+    },
+    {
+      "name": "state_leakage",
+      "description": "Repeated processing of identical payloads to expose global state reuse.",
+      "flaky_signature": "Project A totals drift upwards; Project B remains constant.",
+      "expected": {
+        "Project_A": "Totals change per run",
+        "Project_B": "Constant totals 2.0"
+      }
+    }
+  ]
+}
