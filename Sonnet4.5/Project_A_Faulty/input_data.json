@@ -1,0 +1,6 @@
+{
+  "user_id": "user_001",
+  "items": ["apple", "banana", "cherry"],
+  "priority": 1,
+  "timestamp": "2025-10-31T10:00:00Z"
+}

@@ -1,0 +1,201 @@
+{
+  "test_scenario": {
+    "title": "Flaky Behavior Testing - Concurrent Data Processing System",
+    "description": "This test suite evaluates a data processing system that exhibits multiple types of flaky behavior including race conditions, timing dependencies, shared mutable state, and nondeterministic random number generation.",
+    "flaky_behaviors_tested": [
+      "Race conditions in concurrent request processing",
+      "Timing-dependent logic with sleep-based synchronization",
+      "Shared mutable state without proper locking",
+      "Unseeded random number generation",
+      "External service simulation with variable latency"
+    ],
+    "expected_input_format": "JSON dict with 'user_id', 'items', 'priority', 'timestamp' fields",
+    "expected_output_format": "JSON dict with 'status', 'result', 'processing_time', 'request_id' fields",
+    "mitigation_strategies": [
+      "Thread-safe data structures with proper locking",
+      "Deterministic random seeding",
+      "Atomic operations for shared state",
+      "Retry logic with exponential backoff",
+      "Time mocking for reproducibility"
+    ]
+  },
+  "test_cases": [
+    {
+      "test_id": "TC001",
+      "name": "Normal deterministic processing",
+      "description": "Single request with standard input should produce consistent results",
+      "input": {
+        "user_id": "user_001",
+        "items": ["apple", "banana", "cherry"],
+        "priority": 1,
+        "timestamp": "2025-10-31T10:00:00Z"
+      },
+      "expected_output": {
+        "status": "success",
+        "result": {
+          "processed_items": 3,
+          "total_value": 150
+        }
+      },
+      "flaky_behavior_type": "none",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate": 1.0
+    },
+    {
+      "test_id": "TC002",
+      "name": "Concurrent race condition exposure",
+      "description": "Multiple concurrent requests accessing shared counter - exposes race conditions",
+      "input": {
+        "user_id": "user_002",
+        "items": ["item1", "item2"],
+        "priority": 2,
+        "timestamp": "2025-10-31T10:01:00Z",
+        "concurrent_requests": 10
+      },
+      "expected_output": {
+        "status": "success",
+        "result": {
+          "processed_items": 2,
+          "request_number": 10
+        }
+      },
+      "flaky_behavior_type": "race_condition",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate_faulty": 0.3,
+      "expected_stability_rate_optimized": 1.0
+    },
+    {
+      "test_id": "TC003",
+      "name": "Timing-dependent logic failure",
+      "description": "Processing that depends on precise timing - exposes timing dependencies",
+      "input": {
+        "user_id": "user_003",
+        "items": ["delayed_item"],
+        "priority": 3,
+        "timestamp": "2025-10-31T10:02:00Z",
+        "requires_timing": true
+      },
+      "expected_output": {
+        "status": "success",
+        "result": {
+          "processed_items": 1,
+          "timing_sensitive": true
+        }
+      },
+      "flaky_behavior_type": "timing_dependency",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate_faulty": 0.5,
+      "expected_stability_rate_optimized": 1.0
+    },
+    {
+      "test_id": "TC004",
+      "name": "Boundary case - empty input",
+      "description": "Edge case with empty items list",
+      "input": {
+        "user_id": "user_004",
+        "items": [],
+        "priority": 1,
+        "timestamp": "2025-10-31T10:03:00Z"
+      },
+      "expected_output": {
+        "status": "success",
+        "result": {
+          "processed_items": 0,
+          "total_value": 0
+        }
+      },
+      "flaky_behavior_type": "none",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate": 1.0
+    },
+    {
+      "test_id": "TC005",
+      "name": "Invalid input - malformed data",
+      "description": "Malformed input to test error handling consistency",
+      "input": {
+        "user_id": null,
+        "items": "not_a_list",
+        "priority": -1,
+        "timestamp": "invalid_timestamp"
+      },
+      "expected_output": {
+        "status": "error",
+        "error_type": "ValidationError"
+      },
+      "flaky_behavior_type": "none",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate": 1.0
+    },
+    {
+      "test_id": "TC006",
+      "name": "Random number generation inconsistency",
+      "description": "Test that uses random sampling - exposes unseeded randomness",
+      "input": {
+        "user_id": "user_006",
+        "items": ["rand1", "rand2", "rand3", "rand4", "rand5"],
+        "priority": 2,
+        "timestamp": "2025-10-31T10:04:00Z",
+        "random_sampling": true,
+        "sample_size": 3
+      },
+      "expected_output": {
+        "status": "success",
+        "result": {
+          "processed_items": 3,
+          "sampled": true
+        }
+      },
+      "flaky_behavior_type": "unseeded_random",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate_faulty": 0.2,
+      "expected_stability_rate_optimized": 1.0
+    },
+    {
+      "test_id": "TC007",
+      "name": "External service timeout simulation",
+      "description": "Test with simulated external service call - variable latency",
+      "input": {
+        "user_id": "user_007",
+        "items": ["external_item"],
+        "priority": 3,
+        "timestamp": "2025-10-31T10:05:00Z",
+        "external_service_call": true
+      },
+      "expected_output": {
+        "status": "success",
+        "result": {
+          "processed_items": 1,
+          "external_validated": true
+        }
+      },
+      "flaky_behavior_type": "external_service_variability",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate_faulty": 0.6,
+      "expected_stability_rate_optimized": 1.0
+    },
+    {
+      "test_id": "TC008",
+      "name": "Shared mutable state corruption",
+      "description": "Multiple operations modifying shared cache without synchronization",
+      "input": {
+        "user_id": "user_008",
+        "items": ["cache_item1", "cache_item2"],
+        "priority": 1,
+        "timestamp": "2025-10-31T10:06:00Z",
+        "use_shared_cache": true,
+        "concurrent_cache_ops": 5
+      },
+      "expected_output": {
+        "status": "success",
+        "result": {
+          "processed_items": 2,
+          "cache_hits": 2
+        }
+      },
+      "flaky_behavior_type": "shared_mutable_state",
+      "acceptable_variance": 0.0,
+      "expected_stability_rate_faulty": 0.4,
+      "expected_stability_rate_optimized": 1.0
+    }
+  ]
+}
