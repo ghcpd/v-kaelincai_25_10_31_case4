@@ -1,0 +1,2 @@
+# Requirements for optimized implementation
+pytest==8.0.0

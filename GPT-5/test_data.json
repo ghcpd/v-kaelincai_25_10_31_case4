@@ -1,0 +1,49 @@
+{
+  "cases": [
+    {
+      "id": "normal_sum",
+      "description": "Deterministic small list should sum consistently.",
+      "inputs": [1, 2, 3],
+      "expected_result": 6,
+      "flaky_type": "baseline",
+      "variance_threshold": 0,
+      "expect_failure": false
+    },
+    {
+      "id": "race_condition",
+      "description": "Larger input list triggers more threads; original may drop or duplicate values.",
+      "inputs": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      "expected_result": 20,
+      "flaky_type": "race/time/random skip",
+      "variance_threshold": 5,
+      "expect_failure": false
+    },
+    {
+      "id": "empty_boundary",
+      "description": "Empty list boundary case should yield sum 0.",
+      "inputs": [],
+      "expected_result": 0,
+      "flaky_type": "boundary",
+      "variance_threshold": 0,
+      "expect_failure": false
+    },
+    {
+      "id": "invalid_input",
+      "description": "Contains invalid non-numeric entries should raise or be handled.",
+      "inputs": [1, "x", null, 4],
+      "expected_result": 5,
+      "flaky_type": "invalid/malformed",
+      "variance_threshold": 4,
+      "expect_failure": true
+    },
+    {
+      "id": "time_sensitive",
+      "description": "Values processed near millisecond boundaries; original may skip via modulo condition.",
+      "inputs": [7, 14, 21, 28, 35],
+      "expected_result": 105,
+      "flaky_type": "time-dependent",
+      "variance_threshold": 20,
+      "expect_failure": false
+    }
+  ]
+}
