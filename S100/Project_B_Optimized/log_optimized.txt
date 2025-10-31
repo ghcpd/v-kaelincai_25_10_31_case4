@@ -1,1 +1,0 @@
-# Placeholder log. Execute run_optimized.sh to capture deterministic test runs.

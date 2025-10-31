@@ -1,5 +1,0 @@
-# Requirements for Project A (Faulty)
-# Tested on Python 3.11+
-pytest==7.4.4
-rich==13.7.1
-numpy==1.26.4
