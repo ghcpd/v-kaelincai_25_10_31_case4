@@ -1,0 +1,1 @@
+Placeholder timing report. Run run_original.sh to capture real measurements.

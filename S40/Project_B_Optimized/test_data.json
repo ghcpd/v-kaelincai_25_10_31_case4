@@ -1,0 +1,42 @@
+[
+  {
+    "name": "baseline_order_processing",
+    "input": {"orders": ["ORD-001"]},
+    "expected": {"shape": "list", "min_items": 1},
+    "flaky_type": "deterministic baseline",
+    "runs": 3,
+    "success_criteria": "All runs identical"
+  },
+  {
+    "name": "stress_thread_pool",
+    "input": {"workers": 4},
+    "expected": {"exceptions": []},
+    "flaky_type": "mitigated race",
+    "runs": 10,
+    "success_criteria": "0 failures"
+  },
+  {
+    "name": "boundary_missing_region",
+    "input": {"orders": [{"id": "BAD", "amount": 0}]},
+    "expected": {"raises": "KeyError"},
+    "flaky_type": "defensive validation",
+    "runs": 1,
+    "success_criteria": "KeyError raised"
+  },
+  {
+    "name": "invalid_payload_structure",
+    "input": {"orders": "string"},
+    "expected": {"raises": "TypeError"},
+    "flaky_type": "malformed input",
+    "runs": 1,
+    "success_criteria": "TypeError surfaced"
+  },
+  {
+    "name": "reseeded_determinism_check",
+    "input": {"seed": 42},
+    "expected": {"rate": "consistent"},
+    "flaky_type": "deterministic seeding",
+    "runs": 5,
+    "success_criteria": "All rates identical"
+  }
+]

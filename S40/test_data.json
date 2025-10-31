@@ -1,0 +1,49 @@
+{
+  "scenario": "Concurrent shipping cost calculation with shared mutable cache",
+  "input_format": "List[Dict[str, Any]] representing orders with id, amount, region, priority, items",
+  "output_format": "List[Dict[str, Any]] with id, shipping_cost, discounted_amount, region, timestamp",
+  "flaky_behavior": "Original implementation uses unsynchronized shared state, random latency, and time-based discounts causing inconsistent outputs and runtime failures",
+  "mitigation": "Optimized implementation introduces deterministic seeding, locking, immutable data classes, deterministic clocks, and stable threading semantics",
+  "test_cases": [
+    {
+      "name": "baseline_order_processing",
+      "input": {"orders": ["ORD-001"]},
+      "expected": {"shape": "list", "min_items": 1},
+      "flaky_type": "nondeterministic outputs",
+      "runs": 5,
+      "success_criteria": "Original: outputs differ; Optimized: outputs identical"
+    },
+    {
+      "name": "concurrent_race_condition",
+      "input": {"workers": 4},
+      "expected": {"exceptions": ["RuntimeError"]},
+      "flaky_type": "race condition",
+      "runs": 10,
+      "success_criteria": "Original fails intermittently; Optimized no failures"
+    },
+    {
+      "name": "boundary_missing_region",
+      "input": {"orders": [{"id": "BAD", "amount": 0}]},
+      "expected": {"raises": "ValueError|KeyError"},
+      "flaky_type": "validation",
+      "runs": 1,
+      "success_criteria": "Both enforce validation with deterministic exception"
+    },
+    {
+      "name": "invalid_payload_structure",
+      "input": {"orders": "string"},
+      "expected": {"raises": "TypeError"},
+      "flaky_type": "malformed input",
+      "runs": 1,
+      "success_criteria": "Deterministic failure"
+    },
+    {
+      "name": "hidden_state_lock_leak",
+      "input": {"region": "NA"},
+      "expected": {"lock_resets": true},
+      "flaky_type": "shared mutable state",
+      "runs": 5,
+      "success_criteria": "Original retains lock and fails; Optimized remains stable"
+    }
+  ]
+}
