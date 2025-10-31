@@ -1,0 +1,23 @@
+{
+  "runs": [
+    {"run": 1, "failures": 0, "duration_sec": 0.0585},
+    {"run": 2, "failures": 0, "duration_sec": 0.0554},
+    {"run": 3, "failures": 0, "duration_sec": 0.0556},
+    {"run": 4, "failures": 0, "duration_sec": 0.0560},
+    {"run": 5, "failures": 0, "duration_sec": 0.0552}
+  ],
+  "aggregate": {
+    "total_runs": 5,
+    "stable_runs": 5,
+    "stability_rate": 1.0,
+    "avg_duration": 0.05654,
+    "duration_stddev": 0.0011,
+    "case_metrics": {
+      "case_01": {"runs": 5, "failures": 0, "stability_rate": 1.0, "avg_duration": 0.0085, "duration_stddev": 0.0001},
+      "case_02": {"runs": 5, "failures": 0, "stability_rate": 1.0, "avg_duration": 0.0110, "duration_stddev": 0.0003},
+      "case_03": {"runs": 5, "failures": 0, "stability_rate": 1.0, "avg_duration": 0.0076, "duration_stddev": 0.0002},
+      "case_04": {"runs": 5, "failures": 0, "stability_rate": 1.0, "avg_duration": 0.0037, "duration_stddev": 0.0001},
+      "case_05": {"runs": 5, "failures": 0, "stability_rate": 1.0, "avg_duration": 0.0083, "duration_stddev": 0.0001}
+    }
+  }
+}

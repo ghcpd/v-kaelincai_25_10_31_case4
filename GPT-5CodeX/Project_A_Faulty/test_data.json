@@ -1,0 +1,42 @@
+[
+  {
+    "id": "case_01",
+    "description": "Deterministic aggregate over baseline order list",
+    "input": {"data_file": "input_data.json"},
+    "expected": {"total_revenue": 1266.41, "variance_tolerance": 0.0},
+    "flaky_behavior": "Race condition during concurrent category aggregation",
+    "expected_outcome": "Should pass but intermittently returns totals that differ from 1322.69"
+  },
+  {
+    "id": "case_02",
+    "description": "Concurrent updates with additional synthetic orders injected at runtime",
+    "input": {"synthetic_orders": 3, "quantity_range": [1, 5], "price_range": [10.0, 150.0]},
+    "expected": {"total_revenue_range": [1266.41, 1766.41]},
+    "flaky_behavior": "Non-deterministic random seeding causes category totals to drift",
+    "expected_outcome": "Repeated runs should show different totals outside deterministic bounds"
+  },
+  {
+    "id": "case_03",
+    "description": "Boundary case with zero-quantity orders that should not affect totals",
+    "input": {"orders": [{"order_id": "B1", "category": "books", "quantity": 0, "unit_price": 55.0}]},
+    "expected": {"total_revenue": 1266.41},
+    "flaky_behavior": "Shared mutable state may retain previous subtotal for category",
+    "expected_outcome": "Occasionally computes stale totals including zero-quantity orders"
+  },
+  {
+    "id": "case_04",
+    "description": "Malformed input with missing price field",
+    "input": {"orders": [{"order_id": "BAD42", "category": "games", "quantity": 3}]},
+    "expected": {"exception": "ValueError"},
+    "flaky_behavior": "Error handling path sometimes suppressed due to thread timing",
+    "expected_outcome": "Should raise ValueError but may silently ignore and continue"
+  },
+  {
+    "id": "case_05",
+    "description": "Hidden vulnerability: reliance on local time for discount window",
+    "input": {"timestamp_override": "2025-10-31T23:59:58Z"},
+    "expected": {"discount_applied": true},
+    "flaky_behavior": "Race condition reading mutable discount window flag",
+    "expected_outcome": "Discount flag toggles inconsistently across runs"
+  }
+]

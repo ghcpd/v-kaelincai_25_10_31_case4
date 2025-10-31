@@ -1,0 +1,38 @@
+[
+  {
+    "order_id": "A1001",
+    "category": "books",
+    "quantity": 3,
+    "unit_price": 12.99
+  },
+  {
+    "order_id": "A1002",
+    "category": "games",
+    "quantity": 2,
+    "unit_price": 59.99
+  },
+  {
+    "order_id": "A1003",
+    "category": "books",
+    "quantity": 1,
+    "unit_price": 24.5
+  },
+  {
+    "order_id": "A1004",
+    "category": "electronics",
+    "quantity": 4,
+    "unit_price": 199.99
+  },
+  {
+    "order_id": "A1005",
+    "category": "home",
+    "quantity": 6,
+    "unit_price": 14.25
+  },
+  {
+    "order_id": "A1006",
+    "category": "games",
+    "quantity": 5,
+    "unit_price": 39.5
+  }
+]

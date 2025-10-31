@@ -1,0 +1,47 @@
+[
+  {
+    "id": "case_01",
+    "description": "Baseline aggregation over input_data.json",
+    "input": {"data_file": "input_data.json"},
+    "expected_pre": {"total_revenue": 1266.41, "variance_tolerance": 0.0},
+    "expected_post": {"total_revenue": 1266.41},
+    "flaky_behavior": "Race condition causes jitter in total revenue on pre-optimisation build",
+    "criteria": "Pre build exhibits intermittent drift; post build is exact across runs"
+  },
+  {
+    "id": "case_02",
+    "description": "Synthetic orders injection",
+    "input": {"synthetic_orders": 3, "quantity_range": [1, 5], "price_range": [10.0, 150.0]},
+    "expected_pre": {"total_revenue_range": [1266.41, 1766.41]},
+    "expected_post": {"total_revenue": 1886.41},
+    "flaky_behavior": "Randomised order generation and jittered rounding",
+    "criteria": "Pre build often breaches range; post build deterministic"
+  },
+  {
+    "id": "case_03",
+    "description": "Zero-quantity guard",
+    "input": {"orders": [{"order_id": "B1", "category": "books", "quantity": 0, "unit_price": 55.0}]},
+    "expected_pre": {"total_revenue": 1266.41},
+    "expected_post": {"total_revenue": 1266.41},
+    "flaky_behavior": "Shared mutable state may retain stale totals",
+    "criteria": "Verify zero-quantity orders remain neutral"
+  },
+  {
+    "id": "case_04",
+    "description": "Malformed payload",
+    "input": {"orders": [{"order_id": "BAD42", "category": "games", "quantity": 3}]},
+    "expected_pre": {"exception": "ValueError"},
+    "expected_post": {"exception": "ValueError"},
+    "flaky_behavior": "Pre build sometimes suppresses validation errors",
+    "criteria": "Post build must fail fast on every run"
+  },
+  {
+    "id": "case_05",
+    "description": "Discount window override",
+    "input": {"timestamp_override": "2025-10-31T23:59:58Z"},
+    "expected_pre": {"discount_applied": true},
+    "expected_post": {"discount_applied": true},
+    "flaky_behavior": "Timing-based flag toggles unpredictably without locks",
+    "criteria": "Post build ensures deterministic evaluation"
+  }
+]
